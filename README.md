@@ -27,9 +27,9 @@ Timer 0 muss bei jedem Aufruf eines Tasks neu gesetzt werden auf F63C_16 | 1111-
 
 ### Scheduler
 #### Struktur
-ID: 00_2 | 0_10
-Registerbank: 00_2 | 0_10
-Stackpointer (Init): 80_16
+- ID: 00_2 | 0_10
+- Registerbank: 00_2 | 0_10
+- Stackpointer (Init): 80_16
 
 #### Info
 - Sitzt in der Interrupt Routine von Timer 0, unserem Scheduler-Periode-Timer
@@ -43,9 +43,9 @@ Stackpointer (Init): 80_16
 
 ### Uhr
 #### Struktur
-ID: 01_2 | 1_10
-Registerbank: 01_2 | 1_10
-Stackpointer (Init): A0_16
+- ID: 01_2 | 1_10
+- Registerbank: 01_2 | 1_10
+- Stackpointer (Init): A0_16
 
 #### Info
 - Timer 2 wird für die Uhr verwendet um alle 50 ms ausgelesen zu werden
@@ -55,9 +55,9 @@ Stackpointer (Init): A0_16
 
 ### Reaktions-Task
 #### Struktur
-ID: 10_2 | 2_10
-Registerbank: 10_2 | 2_10
-Stackpointer (Init): C0_16
+- ID: 10_2 | 2_10
+- Registerbank: 10_2 | 2_10
+- Stackpointer (Init): C0_16
 
 #### Info
 - Ports müssen festgelegt werden
@@ -69,9 +69,9 @@ Stackpointer (Init): C0_16
 
 ### Berechnungs-Task
 #### Struktur
-ID: 11_2 | 3_10
-Registerbank: 11_2 | 3_10
-Stackpointer (Init): E0_16
+- ID: 11_2 | 3_10
+- Registerbank: 11_2 | 3_10
+- Stackpointer (Init): E0_16
 
 #### Info
 - Die Info speichern wo wir gerade sind beim Sortieren damit wir nicht immer neu anfangen müssen
