@@ -1,0 +1,42 @@
+; MCS51 Assembler Version 4.1.4 vom 10. 08. 03, A. Roth Controllertechnik, 4. August 2026
+				1:1	#cpu = 89S8252
+				1:2	
+0000				1:3	SortXRam:
+0000	E0			1:4		movx A, @DPTR
+0001	F8			1:5		mov R0, A
+				1:6		
+0002	A3			1:7		 inc DPTR 
+0003	E0			1:8		movx A, @DPTR
+0004	F9			1:9		mov R1, A
+				1:10		
+0005	98			1:11		subb A, R0 ; Carry = 1, wenn R0 > A, also unsortiert -> tauschen	
+0006	50	F8		1:12		jnc SortXRam
+				1:13	
+0008	15	82		1:14		dec DPL
+000A	E5	82		1:15		mov A, DPL
+000C	B4	FF	02	1:16		cjne A, #FFh, Skip
+000F	15	83		1:17		dec DPH
+				1:18		
+0011				1:19		Skip:
+0011	E9			1:20	 	mov A, R1
+0012	F0			1:21		movx @DPTR, A
+0013	A3			1:22		inc DPTR
+0014	E8			1:23		mov A, R0
+0015	F0			1:24		movx @DPTR, A
+				1:25		
+0016	E5	83		1:26		mov A, DPH
+0018	B4	FF	E5	1:27		cjne A, #FFh, SortXRam
+001B	E5	82		1:28		mov A, DPL
+001D	B4	FF	E0	1:29		cjne A, #FFh, SortXRam
+0020	A3			1:30		inc DPTR
+0021	80	DD		1:31		sjmp SortXRam
+				1:32	
+				1:33	
+				1:34	
+				1:35		
+
+ 35 Zeilen übersetzt. Code Ende bei 0023h.
+ 2 Labels:
+	SortXRam: 0000h
+	Skip: 0011h
+
