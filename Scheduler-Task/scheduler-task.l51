@@ -1,0 +1,74 @@
+; MCS51 Assembler Version 4.1.4 vom 10. 08. 03, A. Roth Controllertechnik, 6/ August 2026
+0000				1:1	scheduler:
+				1:2		; push SFR old task
+0000	C0	E0		1:3		push E0h	; push A
+0002	C0	F0		1:4		push F0h	; push B
+0004	C0	D0		1:5		push D0h	; push PSW
+0006	C0	82		1:6		push 82h	; push DPL
+0008	C0	83		1:7		push 83h	; push DPH
+				1:8	
+				1:9		; select registerbank scheduler
+000A	00	00		1:10		clr RS1	;>err8: Bit nicht erkannt
+000C	00	00		1:11		clr RS0	;>err8: Bit nicht erkannt
+				1:12	
+				1:13		; temporarly save SP of old task
+000E	00	00		1:14		mov R3, SP	;>err1: ungültige Operandenkombination
+				1:15		
+				1:16		; set SP of scheduler
+0010	00	00		1:17		mov SP, R4	;>err1: ungültige Operandenkombination
+				1:18	
+				1:19		; pop SFR scheduler task
+0012	D0	83		1:20		pop 83h		; pop DPH
+0014	D0	82		1:21		pop 82h		; pop DPL
+0016	D0	D0		1:22		pop D0h 	; pop PSW
+0018	D0	F0		1:23		pop F0h		; pop B
+001A	D0	E0		1:24		pop E0h		; pop A
+				1:25	
+				1:26		; permanently save SP of old task
+001C	F8			1:27		mov R0, A
+001D	A6	03		1:28		mov @R0, 03h	; copy from R3 to indirect R0 
+				1:29	
+				1:30		; select new Task
+001F	14			1:31		dec A
+0020	B4	04	02	1:32		cjne A, #04h, validRegister
+0023	74	07		1:33			mov A, #07h
+0025				1:34		validRegister:
+				1:35	
+				1:36		; push SFR scheduler task
+0025	C0	E0		1:37		push E0h	; push A
+0027	C0	F0		1:38		push F0h	; push B
+0029	C0	D0		1:39		push D0h	; push PSW
+002B	C0	82		1:40		push 82h	; push DPL
+002D	C0	83		1:41		push 83h	; push DPH
+				1:42	
+				1:43		; set SP of new task
+002F	F8			1:44		mov R0, A
+0030	00	00		1:45		mov SP, @R0	;>err1: ungültige Operandenkombination
+				1:46	
+				1:47		; pop SFR new task
+0032	D0	83		1:48		pop 83h		; pop DPH
+0034	D0	82		1:49		pop 82h		; pop DPL
+0036	D0	D0		1:50		pop D0h 	; pop PSW
+0038	D0	F0		1:51		pop F0h		; pop B
+003A	D0	E0		1:52		pop E0h		; pop A
+				1:53	
+				1:54		; reset Timer 0
+003C	00	00	00	1:55		mov TL0, #3Ch	;>err1: ungültige Operandenkombination
+003F	00	00	00	1:56		mov TH0, #F6h	;>err1: ungültige Operandenkombination
+				1:57	
+0042	32			1:58		reti
+
+Warnungen/Fehler:
+Zeile 1:10  clr RS1 ;>err8: Bit nicht erkannt
+Zeile 1:11  clr RS0 ;>err8: Bit nicht erkannt
+Zeile 1:14  mov R3, SP ;>err1: ungültige Operandenkombination
+Zeile 1:17  mov SP, R4 ;>err1: ungültige Operandenkombination
+Zeile 1:45  mov SP, @R0 ;>err1: ungültige Operandenkombination
+Zeile 1:55  mov TL0, #3Ch ;>err1: ungültige Operandenkombination
+Zeile 1:56  mov TH0, #F6h ;>err1: ungültige Operandenkombination
+
+ 58 Zeilen übersetzt. Code Ende bei 0043h.
+ 2 Labels:
+	scheduler: 0000h
+	validRegister: 0025h
+

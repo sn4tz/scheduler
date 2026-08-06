@@ -1,17 +1,10 @@
 # Konzept Scheduler
 Dies ist das in Repository für den Scheduler sowie im gleichen Zug in dieser README auch das in Aufgabe 10.1 geforderte Konzept.
 
-## Task Struktur
-Die Task-Struktur ist in dem Format "NAME:BIT" aufgebaut, wobei "BIT" die Anzahl der benötigten Bits widerspiegelt.
-
-ID: 2
-Registerbank: 2
-Stackpointer (Init): 8
-
-Die Task-Strukturen sollen in den Registern des Scheduler gespeichert werden.
-Dabei sind immer 2 Register einem Task zugeordnet.
-Setzt man diese Register zusammen, ergeben sich im Highbyte die ID mit Bit-Positionen 3 und 2 sowie Registerbank mit Bit-Position 1 und 0.
-Im Lowbyte befindet sich der Stackpointer.
+## Task Verwaltung
+Jeden der 3 anderen Tasks wird ein Register in der Registerbank des Schedulers zugewisen.
+In diesen Registern wird der Stackpointer gespeichert und von dort auch geladen.
+Das weitere Vorgehen ist im _Scheduler_ beschrieben.
 
 ## Scheduling-Periode
 Die Scheduling-Periode beträgt 2,5 ms.
@@ -26,12 +19,10 @@ Timer 0 muss bei jedem Aufruf eines Tasks neu gesetzt werden auf F63C_16 | 1111-
 ## Tasks
 
 ### Scheduler
-#### Struktur
-- ID: 00_2 | 0_10
-- Registerbank: 00_2 | 0_10
-- Stackpointer (Init): 80_16
-
 #### Info
+- Stackpointer (Init): 80_16
+- Registerbank: 00_2 | 0_10
+- Register für SP: R4 | 04_16
 - Sitzt in der Interrupt Routine von Timer 0, unserem Scheduler-Periode-Timer
 - schaltet die Registerbänke für die Tasks um
     - ggf. auch Stacks falls gewünscht
@@ -44,29 +35,28 @@ Timer 0 muss bei jedem Aufruf eines Tasks neu gesetzt werden auf F63C_16 | 1111-
     - laden des Scheduler Stacks
     - Poppen der SFR vom Scheduler Stack
     - Nächsten Task auswählen
+        - Dies funktioniert indem wir im A-Register des Schedulers unsere Adresse des Registers mit dem SP des nächsten Tasks haben
+        - Der Wert von A wird dann in SP geladen
+        - Alle weiteren Werte werden vom Stack geladen (Auch PSW wodurch die Registerbänke gesetzt werden.)
     - Pushen der SFR auf den Scheduler Stack
     - Popen der SFR vom Stack des neuen Tasks
 - !Amys Aufgabe!
 
 ### Uhr
-#### Struktur
-- ID: 01_2 | 1_10
+#### Info
 - Registerbank: 01_2 | 1_10
 - Stackpointer (Init): A0_16
-
-#### Info
+- Register für SP: R5 | 05_16
 - Timer 2 wird für die Uhr verwendet um alle 50 ms ausgelesen zu werden
     - Der Interrupt wird dabei nicht verwendet; das Interrupt-Bit wird eigenständig ausgelesen
     - Ist der Interrupt bit nicht gesetzt, wird direkt wieder an den Scheduler abgegeben (Scheduler/Timer 0 Interrupt-Bit setzen)
 - Uhrzeit in den Registern speichern
 
 ### Reaktions-Task
-#### Struktur
-- ID: 10_2 | 2_10
+#### Info
 - Registerbank: 10_2 | 2_10
 - Stackpointer (Init): C0_16
-
-#### Info
+- Register für SP: R6 | 06_16
 - Ports müssen festgelegt werden
     - Port 1 als Eingabe
     - P3.2 und P3.3 als Ausgabe 
@@ -75,12 +65,10 @@ Timer 0 muss bei jedem Aufruf eines Tasks neu gesetzt werden auf F63C_16 | 1111-
     - Wert ungleich: Programm weiter ausführen
 
 ### Berechnungs-Task
-#### Struktur
-- ID: 11_2 | 3_10
+#### Info
 - Registerbank: 11_2 | 3_10
 - Stackpointer (Init): E0_16
-
-#### Info
+- Register für SP: R7 | 07_16
 - Die Info speichern wo wir gerade sind beim Sortieren damit wir nicht immer neu anfangen müssen
     - Registerbänke?
 - Sortieralgorithmus
