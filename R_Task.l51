@@ -5,58 +5,64 @@
 0001	C2	D3		1:4	clr rs0 
 0003	D2	D4		1:5	setb rs1 ;Wechselt in die zweite Bank
 				1:6	
-0005				1:7	Comp_P1:
-0005	C2	B2		1:8		clr P3.2 ;Voherige Ausgaben clearen
-0007	C2	B3		1:9		clr P3.3	
-				1:10	
-0009	E5	90		1:11		mov a, p1 ;Laden des Ports in den Akku
-000B	F8			1:12		mov r0, a ;Sichern des Inputs
-				1:13		
-000C	B4	64	00	1:14		cjne a, #100, L1 ;Vergleicht ob A kleiner 100, wenn wird Carry gesetzt
-				1:15		
-000F				1:16			L1: 
-000F	40	11		1:17				jc kleiner
-				1:18		
-0011	B4	C7	00	1:19		cjne a, #199, L2	;Vergleicht ob A kleiner 199 ist, wenn wird Carry gesetzt -- Dementsprechend muss bei keinem Carry A < 199 sein
-				1:20		
-0014				1:21			L2: 
-0014	50	10		1:22				jnc groesser
-				1:23			
-0016	B4	00	00	1:24		cjne a, #0, L3
-				1:25		
-0019				1:26			L3:
-0019	40	0F		1:27				jc error
-				1:28				
-001B	B4	FF	00	1:29		cjne a, #255, L4
-				1:30			
-001E				1:31			L4:
-001E	50	0A		1:32				jnc error
-				1:33				
-0020				1:34		ende:
-0020	80	FE		1:35			end
-				1:36		
-0022				1:37		kleiner:
-0022	D2	B3		1:38			setb P3.3
-0024	80	FA		1:39			sjmp ende
-				1:40			
-0026				1:41		groesser:
-0026	D2	B2		1:42			setb P3.2
-0028	80	F6		1:43			sjmp ende
-				1:44		
-002A				1:45		error:			;Falls kleiner als 0 oder größer als 255 springt er in den Error-Zustand und verbleibt dort
-002A	D2	B2		1:46			setb P3.2
-002C	D2	B3		1:47			setb P3.3
-002E	80	FA		1:48			sjmp error
+0005	E8			1:7		mov a, r0
+				1:8		
+0006	B5	90	02	1:9		cjne a, P1, Comp_P1 ;Vergleich ob sich was zur vorherigen Eingabe geändert hat
+0009	80	1B		1:10		sjmp ende
+				1:11	
+000B				1:12	Comp_P1:
+				1:13				
+000B	C2	B2		1:14				clr P3.2 ;Voherige Ausgaben clearen
+000D	C2	B3		1:15				clr P3.3	
+				1:16	
+000F	E5	90		1:17				mov a, p1 ;Laden des Ports in den Akku
+0011	F8			1:18				mov r0, a ;Sichern des Inputs
+				1:19		
+0012	B4	64	00	1:20		cjne a, #100, L1 ;Vergleicht ob A kleiner 100, wenn wird Carry gesetzt
+				1:21		
+0015				1:22			L1: 
+0015	40	11		1:23				jc kleiner
+				1:24		
+0017	B4	C7	00	1:25		cjne a, #199, L2	;Vergleicht ob A kleiner 199 ist, wenn wird Carry gesetzt -- Dementsprechend muss bei keinem Carry A < 199 sein
+				1:26		
+001A				1:27			L2: 
+001A	50	10		1:28				jnc groesser
+				1:29			
+001C	B4	00	00	1:30		cjne a, #0, L3
+				1:31		
+001F				1:32			L3:
+001F	40	0F		1:33				jc error
+				1:34				
+0021	B4	FF	00	1:35		cjne a, #255, L4
+				1:36			
+0024				1:37			L4:
+0024	50	0A		1:38				jnc error
+				1:39				
+0026				1:40		ende:
+0026	80	FE		1:41			end
+				1:42		
+0028				1:43		kleiner:
+0028	D2	B3		1:44			setb P3.3
+002A	80	FA		1:45			sjmp ende
+				1:46			
+002C				1:47		groesser:
+002C	D2	B2		1:48			setb P3.2
+002E	80	F6		1:49			sjmp ende
+				1:50		
+0030				1:51		error:			;Falls kleiner als 0 oder größer als 255 springt er in den Error-Zustand und verbleibt dort
+0030	D2	B2		1:52			setb P3.2
+0032	D2	B3		1:53			setb P3.3
+0034	80	FA		1:54			sjmp error
 
- 48 Zeilen übersetzt. Code Ende bei 0030h.
+ 54 Zeilen übersetzt. Code Ende bei 0036h.
  9 Labels:
-	Comp_P1: 0005h
-	L1: 000Fh
-	L2: 0014h
-	L3: 0019h
-	L4: 001Eh
-	ende: 0020h
-	kleiner: 0022h
-	groesser: 0026h
-	error: 002Ah
+	Comp_P1: 000Bh
+	L1: 0015h
+	L2: 001Ah
+	L3: 001Fh
+	L4: 0024h
+	ende: 0026h
+	kleiner: 0028h
+	groesser: 002Ch
+	error: 0030h
 

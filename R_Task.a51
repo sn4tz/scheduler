@@ -4,12 +4,18 @@ clr c
 clr rs0 
 setb rs1 ;Wechselt in die zweite Bank
 
-Comp_P1:
-	clr P3.2 ;Voherige Ausgaben clearen
-	clr P3.3	
+	mov a, r0
+	
+	cjne a, P1, Comp_P1 ;Vergleich ob sich was zur vorherigen Eingabe geändert hat
+	sjmp ende
 
-	mov a, p1 ;Laden des Ports in den Akku
-	mov r0, a ;Sichern des Inputs
+Comp_P1:
+			
+			clr P3.2 ;Voherige Ausgaben clearen
+			clr P3.3	
+
+			mov a, p1 ;Laden des Ports in den Akku
+			mov r0, a ;Sichern des Inputs
 	
 	cjne a, #100, L1 ;Vergleicht ob A kleiner 100, wenn wird Carry gesetzt
 	
