@@ -79,3 +79,18 @@ Timer 0 muss bei jedem Aufruf eines Tasks neu gesetzt werden auf F63C_16 | 1111-
 - Sortieralgorithmus
     - Bubble-Sort
 - !Ollis Aufgabe!
+
+## Initialisierung der Stacks
+Bei einem Interrupt wird der PC in folgender Reihenfolge auf den Stack abgelegt:
+1. Lowbyte
+2. Highbyte
+
+Um die Stacks zu initialisieren müssen abseits des PC, der Automatisch beim Aufruf des Interrupts abgelegt wird, auch andere Register zusätzlich abgelegt werden.
+Dazu gehören:
+- Akkumulator
+- B-Register
+- PSW-Register
+- DPTR-Register
+
+Der PC im Stack wird bei der Initialisierung auf die Label der jeweiligen Programme gesetzt.
+Alle anderen Register werden auf 0_16 initialisiert.
