@@ -36,7 +36,7 @@ Timer 0 muss bei jedem Aufruf eines Tasks neu gesetzt werden auf F63C_16 | 1111-
 - schaltet die Registerbänke für die Tasks um
     - ggf. auch Stacks falls gewünscht
 - Beim Aufruf des Schedulers wird PC des Tasks auf den Stack des Tasks gespeichert.
-    - Der Scheduler muss sobald er Aufgerufen wird wie in _SFR-Behandlung_ angegeben, die genannten SFR auf dem Stack speichern, den Stackpointer des vorherigen Tasks in der Task Struktur speichern, auf seinen eigenen Ändern und vor dem Aufruf eines neuen Tasks den aktuellen SP speichern, den SP auf den Stack des jeweiligen Tasks setzen und die SFR laden, bevor mit reti retuniert wird
+    - Der Scheduler muss sobald er Aufgerufen wird wie in _SFR-Behandlung bei Taskwechsel_ angegeben, die genannten SFR auf dem Stack speichern, den Stackpointer des vorherigen Tasks in der Task Struktur speichern, auf seinen eigenen Ändern und vor dem Aufruf eines neuen Tasks den aktuellen SP speichern, den SP auf den Stack des jeweiligen Tasks setzen und die SFR laden, bevor mit reti retuniert wird
     - ACHTUNG: bei dem ersten Aufruf von den Tasks sind PSW und PC nicht in den Stacks gesetzt. Hier wäre die Überlegung das in der Initialisierung zu machen.
 - !Amys Aufgabe!
 
@@ -93,3 +93,14 @@ Dazu gehören:
 
 Der PC im Stack wird bei der Initialisierung auf die Label der jeweiligen Programme gesetzt.
 Alle anderen Register werden auf 0_16 initialisiert.
+
+## SFR-Behandlung bei Taskwechsel
+Beim Aufruf des Scheduler wird durch die Interruptbehandlung der jeweilige PC automatisch auf den Stack gespeichert.
+Dies reicht jedoch für einen Task-Wechsel nicht aus, da auch die Spezialfunktionsregister (SFR) ...
+- Akkumulator
+- B-Register
+- PSW-Register
+- DPTR-Register
+ ... zwischengespeichert werden müssen.
+
+Um dies zu erreichen muss der Scheduler dafür sorgen das diese zwischengespeichert werden.
