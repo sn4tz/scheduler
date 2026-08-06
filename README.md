@@ -38,6 +38,14 @@ Timer 0 muss bei jedem Aufruf eines Tasks neu gesetzt werden auf F63C_16 | 1111-
 - Beim Aufruf des Schedulers wird PC des Tasks auf den Stack des Tasks gespeichert.
     - Der Scheduler muss sobald er Aufgerufen wird wie in _SFR-Behandlung bei Taskwechsel_ angegeben, die genannten SFR auf dem Stack speichern, den Stackpointer des vorherigen Tasks in der Task Struktur speichern, auf seinen eigenen Ändern und vor dem Aufruf eines neuen Tasks den aktuellen SP speichern, den SP auf den Stack des jeweiligen Tasks setzen und die SFR laden, bevor mit reti retuniert wird
     - ACHTUNG: bei dem ersten Aufruf von den Tasks sind PSW und PC nicht in den Stacks gesetzt. Hier wäre die Überlegung das in der Initialisierung zu machen.
+- Ablauf des Schedulers
+    - Pushen der SFR auf den Stack des alten Tasks
+    - wechseln der Registerbank
+    - laden des Scheduler Stacks
+    - Poppen der SFR vom Scheduler Stack
+    - Nächsten Task auswählen
+    - Pushen der SFR auf den Scheduler Stack
+    - Popen der SFR vom Stack des neuen Tasks
 - !Amys Aufgabe!
 
 ### Uhr
