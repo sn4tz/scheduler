@@ -29,7 +29,7 @@ setb EA	; globale Interruptfreigabe
 
 
 ; Uhr
-mov DPTR, #uhr	; kopiere Adresse des Uhr-Labels in DPTR
+mov DPTR, #UhrInit	; kopiere Adresse des Uhr-Labels in DPTR
 
 mov SP, #9Fh	;wechsel in Uhr Stack
 mov E0h, #00h
@@ -81,16 +81,16 @@ mov R7, SP		; schreibe SP in Register 7
 
 ; Scheduler
 mov A, #04h
-mov R4, #86h
+mov R4, #86h ; copy SP after first call of scheduler into scheduler SP permanent storage
 mov SP, #7Fh
+
+setb TF0
 
 end
 ; * * * Hauptprogramm Ende * * *
 
 #Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\Scheduler-Task\scheduler-task.a51'
-uhr:
-setb TF0
-sjmp uhr
+#Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\Uhr\Uhr_Sceduler.a51'
 #Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\R-Task\R_Task.a51'
 #Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\C-Task\C-Task.a51'
 

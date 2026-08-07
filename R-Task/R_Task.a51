@@ -1,13 +1,11 @@
-#cpu = 89S8252
+reaktionsTask:
 
-clr c
-clr rs0 
-setb rs1 ;Wechselt in die zweite Bank
-
+	clr c
 	mov a, r0
 	
 	cjne a, P1, Comp_P1 ;Vergleich ob sich was zur vorherigen Eingabe geändert hat
-	sjmp ende
+	setb TF0
+	sjmp reaktionsTask
 
 Comp_P1:
 			
@@ -38,7 +36,8 @@ Comp_P1:
 			jnc error
 			
 	ende:
-		end
+		setb TF0
+		sjmp reaktionsTask
 	
 	kleiner:
 		setb P3.3

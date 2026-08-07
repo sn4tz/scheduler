@@ -1,4 +1,8 @@
-#cpu = 89S8252
+UhrInit:
+	mov R4, #14h
+	mov R5, #00h
+	mov R6, #00h
+	mov R7, #00h
 
 Uhr:
 	jnb TF2, UhrEnde
@@ -20,4 +24,5 @@ Uhr:
 	mov R7, #00h
 	
 	UhrEnde:
-	ret
+		setb TF0
+		sjmp Uhr

@@ -30,7 +30,7 @@
 				1:29	
 				1:30	
 				1:31	; Uhr
-002D	90	00	CF	1:32	mov DPTR, #uhr	; kopiere Adresse des Uhr-Labels in DPTR
+002D	90	00	D4	1:32	mov DPTR, #UhrInit	; kopiere Adresse des Uhr-Labels in DPTR
 				1:33	
 0030	75	81	9F	1:34	mov SP, #9Fh	;wechsel in Uhr Stack
 0033	75	E0	00	1:35	mov E0h, #00h
@@ -47,7 +47,7 @@
 0047	AD	81		1:46	mov R5, SP		; schreibe Uhr SP in Register 5
 				1:47	
 				1:48	; Reaktions-Task
-0049	90	00	D3	1:49	mov DPTR, #reaktionsTask		; kopiere Adresse des Reaktions-Task-Labels in DPTR
+0049	90	00	FB	1:49	mov DPTR, #reaktionsTask		; kopiere Adresse des Reaktions-Task-Labels in DPTR
 				1:50	
 004C	75	81	BF	1:51	mov SP, #BFh
 004F	75	E0	00	1:52	mov E0h, #00h
@@ -64,7 +64,7 @@
 0063	AE	81		1:63	mov R6, SP		; schreibe SP in Register 6
 				1:64	
 				1:65	; Berechnungs-Task
-0065	90	01	08	1:66	mov DPTR, #SortXRam		; kopiere Adresse des Berechnungs-Task-Labels in DPTR
+0065	90	01	31	1:66	mov DPTR, #SortXRam		; kopiere Adresse des Berechnungs-Task-Labels in DPTR
 				1:67	
 0068	75	81	DF	1:68	mov SP, #DFh
 006B	75	E0	00	1:69	mov E0h, #00h
@@ -122,142 +122,175 @@
 				2:29	
 				2:30		; select new Task
 00AB	14			2:31		dec A
-00AC	B4	04	02	2:32		cjne A, #04h, validRegister
-00AF	74	07		2:33			mov A, #07h
-00B1				2:34		validRegister:
-				2:35	
-				2:36		; push SFR scheduler task
-00B1	C0	E0		2:37		push E0h	; push A
-00B3	C0	F0		2:38		push F0h	; push B
-00B5	C0	D0		2:39		push D0h	; push PSW
-00B7	C0	82		2:40		push 82h	; push DPL
-00B9	C0	83		2:41		push 83h	; push DPH
-				2:42	
-				2:43		; set SP of new task
-00BB	F8			2:44		mov R0, A
-00BC	86	81		2:45		mov SP, @R0
-				2:46	
-				2:47		; pop SFR new task
-00BE	D0	83		2:48		pop 83h		; pop DPH
-00C0	D0	82		2:49		pop 82h		; pop DPL
-00C2	D0	D0		2:50		pop D0h 	; pop PSW
-00C4	D0	F0		2:51		pop F0h		; pop B
-00C6	D0	E0		2:52		pop E0h		; pop A
-				2:53	
-				2:54		; reset Timer 0
-00C8	75	8A	3C	2:55		mov TL0, #3Ch
-00CB	75	8C	F6	2:56		mov TH0, #F6h
-				2:57	
-00CE	32			2:58		reti
-00CF				1:93	uhr:
-00CF	D2	8D		1:94	setb TF0
-00D1	80	FC		1:95	sjmp uhr
-				1:96	#Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\R-Task\R_Task.a51'
-00D3				2:1	reaktionsTask:
-				2:2	
-00D3	E8			2:3		mov a, r0
-				2:4		
-00D4	B5	90	04	2:5		cjne a, P1, Comp_P1 ;Vergleich ob sich was zur vorherigen Eingabe geändert hat
-00D7	D2	8D		2:6		setb TF0
-00D9	80	F8		2:7		sjmp reaktionsTask
-				2:8	
-00DB				2:9	Comp_P1:
-				2:10				
-00DB	C2	B2		2:11				clr P3.2 ;Voherige Ausgaben clearen
-00DD	C2	B3		2:12				clr P3.3	
-				2:13	
-00DF	E5	90		2:14				mov a, p1 ;Laden des Ports in den Akku
-00E1	F8			2:15				mov r0, a ;Sichern des Inputs
-				2:16		
-00E2	B4	64	00	2:17		cjne a, #100, L1 ;Vergleicht ob A kleiner 100, wenn wird Carry gesetzt
+00AC	B4	03	02	2:32		cjne A, #03h, notFirstTimeRun
+00AF	74	07		2:33	  	mov A, #07h
+00B1				2:34	  notFirstTimeRun:
+00B1	B4	04	02	2:35		cjne A, #04h, validRegister
+00B4	74	07		2:36			mov A, #07h
+00B6				2:37		validRegister:
+				2:38	
+				2:39		; push SFR scheduler task
+00B6	C0	E0		2:40		push E0h	; push A
+00B8	C0	F0		2:41		push F0h	; push B
+00BA	C0	D0		2:42		push D0h	; push PSW
+00BC	C0	82		2:43		push 82h	; push DPL
+00BE	C0	83		2:44		push 83h	; push DPH
+				2:45	
+				2:46		; set SP of new task
+00C0	F8			2:47		mov R0, A
+00C1	86	81		2:48		mov SP, @R0
+				2:49	
+				2:50		; pop SFR new task
+00C3	D0	83		2:51		pop 83h		; pop DPH
+00C5	D0	82		2:52		pop 82h		; pop DPL
+00C7	D0	D0		2:53		pop D0h 	; pop PSW
+00C9	D0	F0		2:54		pop F0h		; pop B
+00CB	D0	E0		2:55		pop E0h		; pop A
+				2:56	
+				2:57		; reset Timer 0
+00CD	75	8A	3C	2:58		mov TL0, #3Ch
+00D0	75	8C	F6	2:59		mov TH0, #F6h
+				2:60	
+00D3	32			2:61		reti
+				1:93	#Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\Uhr\Uhr_Sceduler.a51'
+00D4				2:1	UhrInit:
+00D4	7C	14		2:2		mov R4, #14h
+00D6	7D	00		2:3		mov R5, #00h
+00D8	7E	00		2:4		mov R6, #00h
+00DA	7F	00		2:5		mov R7, #00h
+				2:6	
+00DC				2:7	Uhr:
+00DC	30	CF	18	2:8		jnb TF2, UhrEnde
+00DF	C2	CF		2:9		clr TF2
+				2:10		
+00E1	DC	14		2:11		djnz R4, UhrEnde ; Check 20 * 50 ms
+00E3	7C	14		2:12		mov R4, #14h
+00E5	0D			2:13		inc R5
+				2:14		
+00E6	BD	3C	0E	2:15		cjne R5, #3Ch, UhrEnde	
+00E9	7D	00		2:16		mov R5, #00h
+00EB	0E			2:17		inc R6
 				2:18		
-00E5				2:19			L1: 
-00E5	40	13		2:20				jc kleiner
-				2:21		
-00E7	B4	C7	00	2:22		cjne a, #199, L2	;Vergleicht ob A kleiner 199 ist, wenn wird Carry gesetzt -- Dementsprechend muss bei keinem Carry A < 199 sein
-				2:23		
-00EA				2:24			L2: 
-00EA	50	12		2:25				jnc groesser
-				2:26			
-00EC	B4	00	00	2:27		cjne a, #0, L3
-				2:28		
-00EF				2:29			L3:
-00EF	40	11		2:30				jc error
-				2:31				
-00F1	B4	FF	00	2:32		cjne a, #255, L4
-				2:33			
-00F4				2:34			L4:
-00F4	50	0C		2:35				jnc error
-				2:36				
-00F6				2:37		ende:
-00F6	D2	8D		2:38			setb TF0
-00F8	80	D9		2:39			sjmp reaktionsTask
-				2:40		
-00FA				2:41		kleiner:
-00FA	D2	B3		2:42			setb P3.3
-00FC	80	F8		2:43			sjmp ende
-				2:44			
-00FE				2:45		groesser:
-00FE	D2	B2		2:46			setb P3.2
-0100	80	F4		2:47			sjmp ende
-				2:48		
-0102				2:49		error:			;Falls kleiner als 0 oder größer als 255 springt er in den Error-Zustand und verbleibt dort
-0102	D2	B2		2:50			setb P3.2
-0104	D2	B3		2:51			setb P3.3
-0106	80	FA		2:52			sjmp error
-				1:97	#Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\C-Task\C-Task.a51'
-0108				2:1	SortXRam:
-0108	E0			2:2		movx A, @DPTR
-0109	F8			2:3		mov R0, A
+00EC	BE	3C	08	2:19		cjne R6, #3Ch, UhrEnde
+00EF	7E	00		2:20		mov R6, #00h
+00F1	0F			2:21		inc R7
+				2:22		
+00F2	BF	18	02	2:23		cjne R7, #18h, UhrEnde
+00F5	7F	00		2:24		mov R7, #00h
+				2:25		
+00F7				2:26		UhrEnde:
+00F7	D2	8D		2:27			setb TF0
+00F9	80	E1		2:28			sjmp Uhr
+				1:94	#Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\R-Task\R_Task.a51'
+00FB				2:1	reaktionsTask:
+				2:2	
+00FB	C3			2:3		clr c
+00FC	E8			2:4		mov a, r0
+				2:5		
+00FD	B5	90	04	2:6		cjne a, P1, Comp_P1 ;Vergleich ob sich was zur vorherigen Eingabe geändert hat
+0100	D2	8D		2:7		setb TF0
+0102	80	F7		2:8		sjmp reaktionsTask
+				2:9	
+0104				2:10	Comp_P1:
+				2:11				
+0104	C2	B2		2:12				clr P3.2 ;Voherige Ausgaben clearen
+0106	C2	B3		2:13				clr P3.3	
+				2:14	
+0108	E5	90		2:15				mov a, p1 ;Laden des Ports in den Akku
+010A	F8			2:16				mov r0, a ;Sichern des Inputs
+				2:17		
+010B	B4	64	00	2:18		cjne a, #100, L1 ;Vergleicht ob A kleiner 100, wenn wird Carry gesetzt
+				2:19		
+010E				2:20			L1: 
+010E	40	13		2:21				jc kleiner
+				2:22		
+0110	B4	C7	00	2:23		cjne a, #199, L2	;Vergleicht ob A kleiner 199 ist, wenn wird Carry gesetzt -- Dementsprechend muss bei keinem Carry A < 199 sein
+				2:24		
+0113				2:25			L2: 
+0113	50	12		2:26				jnc groesser
+				2:27			
+0115	B4	00	00	2:28		cjne a, #0, L3
+				2:29		
+0118				2:30			L3:
+0118	40	11		2:31				jc error
+				2:32				
+011A	B4	FF	00	2:33		cjne a, #255, L4
+				2:34			
+011D				2:35			L4:
+011D	50	0C		2:36				jnc error
+				2:37				
+011F				2:38		ende:
+011F	D2	8D		2:39			setb TF0
+0121	80	D8		2:40			sjmp reaktionsTask
+				2:41		
+0123				2:42		kleiner:
+0123	D2	B3		2:43			setb P3.3
+0125	80	F8		2:44			sjmp ende
+				2:45			
+0127				2:46		groesser:
+0127	D2	B2		2:47			setb P3.2
+0129	80	F4		2:48			sjmp ende
+				2:49		
+012B				2:50		error:			;Falls kleiner als 0 oder größer als 255 springt er in den Error-Zustand und verbleibt dort
+012B	D2	B2		2:51			setb P3.2
+012D	D2	B3		2:52			setb P3.3
+012F	80	FA		2:53			sjmp error
+				1:95	#Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\C-Task\C-Task.a51'
+0131				2:1	SortXRam:
+0131	E0			2:2		movx A, @DPTR
+0132	F8			2:3		mov R0, A
 				2:4		
-010A	A3			2:5		 inc DPTR 
-010B	E0			2:6		movx A, @DPTR
-010C	F9			2:7		mov R1, A
+0133	A3			2:5		 inc DPTR 
+0134	E0			2:6		movx A, @DPTR
+0135	F9			2:7		mov R1, A
 				2:8		
-010D	98			2:9		subb A, R0 ; Carry = 1, wenn R0 > A, also unsortiert -> tauschen	
-010E	50	F8		2:10		jnc SortXRam
+0136	98			2:9		subb A, R0 ; Carry = 1, wenn R0 > A, also unsortiert -> tauschen	
+0137	50	F8		2:10		jnc SortXRam
 				2:11	
-0110	15	82		2:12		dec DPL
-0112	E5	82		2:13		mov A, DPL
-0114	B4	FF	02	2:14		cjne A, #FFh, Skip
-0117	15	83		2:15		dec DPH
+0139	15	82		2:12		dec DPL
+013B	E5	82		2:13		mov A, DPL
+013D	B4	FF	02	2:14		cjne A, #FFh, Skip
+0140	15	83		2:15		dec DPH
 				2:16		
-0119				2:17		Skip:
-0119	E9			2:18	 	mov A, R1
-011A	F0			2:19		movx @DPTR, A
-011B	A3			2:20		inc DPTR
-011C	E8			2:21		mov A, R0
-011D	F0			2:22		movx @DPTR, A
+0142				2:17		Skip:
+0142	E9			2:18	 	mov A, R1
+0143	F0			2:19		movx @DPTR, A
+0144	A3			2:20		inc DPTR
+0145	E8			2:21		mov A, R0
+0146	F0			2:22		movx @DPTR, A
 				2:23		
-011E	E5	83		2:24		mov A, DPH
-0120	B4	FF	E5	2:25		cjne A, #FFh, SortXRam
-0123	E5	82		2:26		mov A, DPL
-0125	B4	FF	E0	2:27		cjne A, #FFh, SortXRam
-0128	A3			2:28		inc DPTR
-0129	80	DD		2:29		sjmp SortXRam
+0147	E5	83		2:24		mov A, DPH
+0149	B4	FF	E5	2:25		cjne A, #FFh, SortXRam
+014C	E5	82		2:26		mov A, DPL
+014E	B4	FF	E0	2:27		cjne A, #FFh, SortXRam
+0151	A3			2:28		inc DPTR
+0152	80	DD		2:29		sjmp SortXRam
 				2:30	
 				2:31	
 				2:32	
 				2:33		
-				1:98	
-				1:99	
+				1:96	
+				1:97	
 
- 242 Zeilen übersetzt. Code Ende bei 012Bh.
- 16 Labels:
+ 272 Zeilen übersetzt. Code Ende bei 0154h.
+ 19 Labels:
 	Initialisierung: 000Dh
 	scheduler: 008Ch
-	validRegister: 00B1h
-	uhr: 00CFh
-	reaktionsTask: 00D3h
-	Comp_P1: 00DBh
-	L1: 00E5h
-	L2: 00EAh
-	L3: 00EFh
-	L4: 00F4h
-	ende: 00F6h
-	kleiner: 00FAh
-	groesser: 00FEh
-	error: 0102h
-	SortXRam: 0108h
-	Skip: 0119h
+	notFirstTimeRun: 00B1h
+	validRegister: 00B6h
+	UhrInit: 00D4h
+	Uhr: 00DCh
+	UhrEnde: 00F7h
+	reaktionsTask: 00FBh
+	Comp_P1: 0104h
+	L1: 010Eh
+	L2: 0113h
+	L3: 0118h
+	L4: 011Dh
+	ende: 011Fh
+	kleiner: 0123h
+	groesser: 0127h
+	error: 012Bh
+	SortXRam: 0131h
+	Skip: 0142h
 

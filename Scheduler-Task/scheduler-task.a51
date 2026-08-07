@@ -29,6 +29,9 @@ scheduler:
 
 	; select new Task
 	dec A
+	cjne A, #03h, notFirstTimeRun
+  	mov A, #07h
+  notFirstTimeRun:
 	cjne A, #04h, validRegister
 		mov A, #07h
 	validRegister:
