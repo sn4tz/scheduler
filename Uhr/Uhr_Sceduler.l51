@@ -1,0 +1,30 @@
+; MCS51 Assembler Version 4.1.4 vom 10. 08. 03, A. Roth Controllertechnik, 7. August 2026
+				1:1	#cpu = 89S8252
+				1:2	
+0000				1:3	Uhr:
+0000	30	CF	18	1:4		jnb TF2, UhrEnde
+0003	C2	CF		1:5		clr TF2
+				1:6		
+0005	DC	14		1:7		djnz R4, UhrEnde ; Check 20 * 50 ms
+0007	7C	14		1:8		mov R4, #14h
+0009	0D			1:9		inc R5
+				1:10		
+000A	BD	3C	0E	1:11		cjne R5, #3Ch, UhrEnde	
+000D	7D	00		1:12		mov R5, #00h
+000F	0E			1:13		inc R6
+				1:14		
+0010	BE	3C	08	1:15		cjne R6, #3Ch, UhrEnde
+0013	7E	00		1:16		mov R6, #00h
+0015	0F			1:17		inc R7
+				1:18		
+0016	BF	18	02	1:19		cjne R7, #18h, UhrEnde
+0019	7F	00		1:20		mov R7, #00h
+				1:21		
+001B				1:22		UhrEnde:
+001B	22			1:23		ret
+
+ 23 Zeilen übersetzt. Code Ende bei 001Ch.
+ 2 Labels:
+	Uhr: 0000h
+	UhrEnde: 001Bh
+
