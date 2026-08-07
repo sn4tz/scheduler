@@ -1,0 +1,263 @@
+; MCS51 Assembler Version 4.1.4 vom 10. 08. 03, A. Roth Controllertechnik, 7/ August 2026
+				1:1	; 06/08/2026 21:22:44
+				1:2	
+				1:3	#cpu = 89S8252	; @12 MHz
+				1:4	
+				1:5	
+0000	01	0D		1:6	ajmp Initialisierung
+				1:7	
+000B				1:8	Timer 0:	; Timer 0 Interrupt
+000B	01	8C		1:9		ajmp scheduler
+				1:10	
+000D				1:11	Initialisierung:
+000D	75	81	7F	1:12	mov SP, # 7Fh	; Stackbeginn
+0010	43	89	01	1:13	orl TMOD, # 01h	; Timer 0 als 16-Bit Timer. 
+				1:14	; Die Überlauffrequenz des Timer 0 beträgt 15,25879 Hz, die Periodendauer 65,536 ms.
+0013	75	8A	3C	1:15	mov TL0, # 3Ch
+0016	75	8C	F6	1:16	mov TH0, # F6h
+0019	D2	8C		1:17	setb TR0	; Timer 0 läuft.
+				1:18	; Timer 2:
+				1:19	; Timer 2 ist ein 16-Bit Aufwärtszähler mit automatischer Nachladung aus den Reload-Registern bei Überlauf. Die Überlauffrequenz beträgt 20 Hz, die Periodendauer 50 ms.
+001B	75	CA	B0	1:20	mov RCAP2L, # B0h
+001E	75	CB	3C	1:21	mov RCAP2H, # 3Ch
+0021	75	CC	B0	1:22	mov TL2, # B0h
+0024	75	CD	3C	1:23	mov TH2, # 3Ch
+0027	D2	CA		1:24	setb TR2	; Timer 2 läuft.
+				1:25	
+				1:26	; Interrupts
+0029	D2	A9		1:27	setb ET0	; Timer 0 Interrupt freigeben
+002B	D2	AF		1:28	setb EA	; globale Interruptfreigabe
+				1:29	
+				1:30	
+				1:31	; Uhr
+002D	90	00	CF	1:32	mov DPTR, #uhr	; kopiere Adresse des Uhr-Labels in DPTR
+				1:33	
+0030	75	81	9F	1:34	mov SP, #9Fh	;wechsel in Uhr Stack
+0033	75	E0	00	1:35	mov E0h, #00h
+0036	75	F0	08	1:36	mov F0h, #08h
+				1:37	
+0039	C0	82		1:38	push DPL	; pushe Lowbyte der Adresse des Uhr-Labels 
+003B	C0	83		1:39	push DPH		; kopiere Highbyte der Adresse des Uhr-Labels
+003D	C0	E0		1:40	push E0h			; schreibe Init-Wert für A auf Uhr Stack
+003F	C0	E0		1:41	push E0h			; schreibe Init-Wert für B auf Uhr Stack
+0041	C0	F0		1:42	push F0h			; schreibe Init-Wert für PSW auf Uhr Stack
+0043	C0	E0		1:43	push E0h			; schreibe Init-Wert für DPH auf Uhr Stack
+0045	C0	E0		1:44	push E0h			; schreibe Init-Wert für DPL auf Uhr Stack
+				1:45	
+0047	AD	81		1:46	mov R5, SP		; schreibe Uhr SP in Register 5
+				1:47	
+				1:48	; Reaktions-Task
+0049	90	00	D3	1:49	mov DPTR, #reaktionsTask		; kopiere Adresse des Reaktions-Task-Labels in DPTR
+				1:50	
+004C	75	81	BF	1:51	mov SP, #BFh
+004F	75	E0	00	1:52	mov E0h, #00h
+0052	75	F0	10	1:53	mov F0h, #10h
+				1:54	
+0055	C0	82		1:55	push DPL		; kopiere Lowbyte der Adresse des Reaktions-Task-Labels auf den Stack der Uhr
+0057	C0	83		1:56	push DPH		; kopiere Highbyte der Adresse des Reaktions-Task-Labels auf den Stack der Uhr
+0059	C0	E0		1:57	push E0h			; schreibe Init-Wert für A auf Stack
+005B	C0	E0		1:58	push E0h			; schreibe Init-Wert für B auf Stack
+005D	C0	F0		1:59	push F0h			; schreibe Init-Wert für PSW auf Stack
+005F	C0	E0		1:60	push E0h			; schreibe Init-Wert für DPH auf Stack
+0061	C0	E0		1:61	push E0h 		; schreibe Init-Wert für DPL auf Stack
+				1:62	
+0063	AE	81		1:63	mov R6, SP		; schreibe SP in Register 6
+				1:64	
+				1:65	; Berechnungs-Task
+0065	90	01	08	1:66	mov DPTR, #SortXRam		; kopiere Adresse des Berechnungs-Task-Labels in DPTR
+				1:67	
+0068	75	81	DF	1:68	mov SP, #DFh
+006B	75	E0	00	1:69	mov E0h, #00h
+006E	75	F0	18	1:70	mov F0h, #18h
+				1:71	
+0071	C0	82		1:72	push DPL		; kopiere Lowbyte der Adresse des Berechnungs-Task-Labels auf den Stack der Uhr
+0073	C0	83		1:73	push DPH		; kopiere Highbyte der Adresse des Berechnungs-Task-Labels auf den Stack der Uhr
+0075	C0	E0		1:74	push E0h		; schreibe Init-Wert für A auf Stack
+0077	C0	E0		1:75	push E0h		; schreibe Init-Wert für B auf Stack
+0079	C0	F0		1:76	push F0h		; schreibe Init-Wert für PSW auf Stack
+007B	C0	E0		1:77	push E0h		; schreibe Init-Wert für DPH auf Stack
+007D	C0	E0		1:78	push E0h 		; schreibe Init-Wert für DPL auf Stack
+				1:79	
+007F	AF	81		1:80	mov R7, SP		; schreibe SP in Register 7
+				1:81	
+				1:82	; Scheduler
+0081	74	04		1:83	mov A, #04h
+0083	7C	86		1:84	mov R4, #86h ; copy SP after first call of scheduler into scheduler SP permanent storage
+0085	75	81	7F	1:85	mov SP, #7Fh
+				1:86	
+0088	D2	8D		1:87	setb TF0
+				1:88	
+008A	80	FE		1:89	end
+				1:90	; * * * Hauptprogramm Ende * * *
+				1:91	
+				1:92	#Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\Scheduler-Task\scheduler-task.a51'
+008C				2:1	scheduler:
+				2:2		; push SFR old task
+008C	C0	E0		2:3		push E0h	; push A
+008E	C0	F0		2:4		push F0h	; push B
+0090	C0	D0		2:5		push D0h	; push PSW
+0092	C0	82		2:6		push 82h	; push DPL
+0094	C0	83		2:7		push 83h	; push DPH
+				2:8	
+				2:9		; select registerbank scheduler
+0096	C2	D4		2:10		clr RS1
+0098	C2	D3		2:11		clr RS0
+				2:12	
+				2:13		; temporarly save SP of old task
+009A	AB	81		2:14		mov R3, SP
+				2:15		
+				2:16		; set SP of scheduler
+009C	8C	81		2:17		mov SP, R4
+				2:18	
+				2:19		; pop SFR scheduler task
+009E	D0	83		2:20		pop 83h		; pop DPH
+00A0	D0	82		2:21		pop 82h		; pop DPL
+00A2	D0	D0		2:22		pop D0h 	; pop PSW
+00A4	D0	F0		2:23		pop F0h		; pop B
+00A6	D0	E0		2:24		pop E0h		; pop A
+				2:25	
+				2:26		; permanently save SP of old task
+00A8	F8			2:27		mov R0, A
+00A9	A6	03		2:28		mov @R0, 03h	; copy from R3 to indirect R0 
+				2:29	
+				2:30		; select new Task
+00AB	14			2:31		dec A
+00AC	B4	04	02	2:32		cjne A, #04h, validRegister
+00AF	74	07		2:33			mov A, #07h
+00B1				2:34		validRegister:
+				2:35	
+				2:36		; push SFR scheduler task
+00B1	C0	E0		2:37		push E0h	; push A
+00B3	C0	F0		2:38		push F0h	; push B
+00B5	C0	D0		2:39		push D0h	; push PSW
+00B7	C0	82		2:40		push 82h	; push DPL
+00B9	C0	83		2:41		push 83h	; push DPH
+				2:42	
+				2:43		; set SP of new task
+00BB	F8			2:44		mov R0, A
+00BC	86	81		2:45		mov SP, @R0
+				2:46	
+				2:47		; pop SFR new task
+00BE	D0	83		2:48		pop 83h		; pop DPH
+00C0	D0	82		2:49		pop 82h		; pop DPL
+00C2	D0	D0		2:50		pop D0h 	; pop PSW
+00C4	D0	F0		2:51		pop F0h		; pop B
+00C6	D0	E0		2:52		pop E0h		; pop A
+				2:53	
+				2:54		; reset Timer 0
+00C8	75	8A	3C	2:55		mov TL0, #3Ch
+00CB	75	8C	F6	2:56		mov TH0, #F6h
+				2:57	
+00CE	32			2:58		reti
+00CF				1:93	uhr:
+00CF	D2	8D		1:94	setb TF0
+00D1	80	FC		1:95	sjmp uhr
+				1:96	#Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\R-Task\R_Task.a51'
+00D3				2:1	reaktionsTask:
+				2:2	
+00D3	E8			2:3		mov a, r0
+				2:4		
+00D4	B5	90	04	2:5		cjne a, P1, Comp_P1 ;Vergleich ob sich was zur vorherigen Eingabe geändert hat
+00D7	D2	8D		2:6		setb TF0
+00D9	80	F8		2:7		sjmp reaktionsTask
+				2:8	
+00DB				2:9	Comp_P1:
+				2:10				
+00DB	C2	B2		2:11				clr P3.2 ;Voherige Ausgaben clearen
+00DD	C2	B3		2:12				clr P3.3	
+				2:13	
+00DF	E5	90		2:14				mov a, p1 ;Laden des Ports in den Akku
+00E1	F8			2:15				mov r0, a ;Sichern des Inputs
+				2:16		
+00E2	B4	64	00	2:17		cjne a, #100, L1 ;Vergleicht ob A kleiner 100, wenn wird Carry gesetzt
+				2:18		
+00E5				2:19			L1: 
+00E5	40	13		2:20				jc kleiner
+				2:21		
+00E7	B4	C7	00	2:22		cjne a, #199, L2	;Vergleicht ob A kleiner 199 ist, wenn wird Carry gesetzt -- Dementsprechend muss bei keinem Carry A < 199 sein
+				2:23		
+00EA				2:24			L2: 
+00EA	50	12		2:25				jnc groesser
+				2:26			
+00EC	B4	00	00	2:27		cjne a, #0, L3
+				2:28		
+00EF				2:29			L3:
+00EF	40	11		2:30				jc error
+				2:31				
+00F1	B4	FF	00	2:32		cjne a, #255, L4
+				2:33			
+00F4				2:34			L4:
+00F4	50	0C		2:35				jnc error
+				2:36				
+00F6				2:37		ende:
+00F6	D2	8D		2:38			setb TF0
+00F8	80	D9		2:39			sjmp reaktionsTask
+				2:40		
+00FA				2:41		kleiner:
+00FA	D2	B3		2:42			setb P3.3
+00FC	80	F8		2:43			sjmp ende
+				2:44			
+00FE				2:45		groesser:
+00FE	D2	B2		2:46			setb P3.2
+0100	80	F4		2:47			sjmp ende
+				2:48		
+0102				2:49		error:			;Falls kleiner als 0 oder größer als 255 springt er in den Error-Zustand und verbleibt dort
+0102	D2	B2		2:50			setb P3.2
+0104	D2	B3		2:51			setb P3.3
+0106	80	FA		2:52			sjmp error
+				1:97	#Include 'Z:\embeddedsystems\einfuehrungsaufgaben\aufgabe10\C-Task\C-Task.a51'
+0108				2:1	SortXRam:
+0108	E0			2:2		movx A, @DPTR
+0109	F8			2:3		mov R0, A
+				2:4		
+010A	A3			2:5		 inc DPTR 
+010B	E0			2:6		movx A, @DPTR
+010C	F9			2:7		mov R1, A
+				2:8		
+010D	98			2:9		subb A, R0 ; Carry = 1, wenn R0 > A, also unsortiert -> tauschen	
+010E	50	F8		2:10		jnc SortXRam
+				2:11	
+0110	15	82		2:12		dec DPL
+0112	E5	82		2:13		mov A, DPL
+0114	B4	FF	02	2:14		cjne A, #FFh, Skip
+0117	15	83		2:15		dec DPH
+				2:16		
+0119				2:17		Skip:
+0119	E9			2:18	 	mov A, R1
+011A	F0			2:19		movx @DPTR, A
+011B	A3			2:20		inc DPTR
+011C	E8			2:21		mov A, R0
+011D	F0			2:22		movx @DPTR, A
+				2:23		
+011E	E5	83		2:24		mov A, DPH
+0120	B4	FF	E5	2:25		cjne A, #FFh, SortXRam
+0123	E5	82		2:26		mov A, DPL
+0125	B4	FF	E0	2:27		cjne A, #FFh, SortXRam
+0128	A3			2:28		inc DPTR
+0129	80	DD		2:29		sjmp SortXRam
+				2:30	
+				2:31	
+				2:32	
+				2:33		
+				1:98	
+				1:99	
+
+ 242 Zeilen übersetzt. Code Ende bei 012Bh.
+ 16 Labels:
+	Initialisierung: 000Dh
+	scheduler: 008Ch
+	validRegister: 00B1h
+	uhr: 00CFh
+	reaktionsTask: 00D3h
+	Comp_P1: 00DBh
+	L1: 00E5h
+	L2: 00EAh
+	L3: 00EFh
+	L4: 00F4h
+	ende: 00F6h
+	kleiner: 00FAh
+	groesser: 00FEh
+	error: 0102h
+	SortXRam: 0108h
+	Skip: 0119h
+
