@@ -1,5 +1,3 @@
-#cpu = 89S8252
-
 SortXRam:
 	movx A, @DPTR
 	mov R0, A
