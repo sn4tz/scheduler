@@ -1,0 +1,67 @@
+\ProvidesPackage{sethesis}
+
+%\RequirePackage[standard-baselineskips]{cmbright}
+%\RequirePackage{palatino}
+
+%\def\usedfonts{CM-Bright}
+
+\newcommand{\@uniname}{}
+\newcommand{\@ort}{}
+\newcommand{\@datum}{}
+
+\newcommand{\unilogo}[1]{\def\@unilogo{#1}}
+\newcommand{\uniname}[1]{\def\@uniname{#1}}
+\newcommand{\ort}[1]{\def\@ort{#1}}
+\newcommand{\datum}[1]{\def\@datum{#1}}
+\newcommand{\version}[1]{\def\@version{#1}}
+
+\fancypagestyle{datenblattheader}{
+    \fancyhf{} % alles löschen
+    \fancyhead[L]{\@title\space v.\@version}
+    \fancyhead[R]{\@author}
+    \renewcommand{\headrulewidth}{0.4pt}
+}
+
+\titleformat{\chapter}{\bf\Huge}{\thechapter\quad}{0pt}{}
+
+\renewcommand{\maketitle}{
+\begin{titlepage}
+%
+\begin{center}
+%\vspace*{0.5em}
+\@unilogo
+\end{center}
+%
+\vspace*{5em}
+%
+\begin{center}
+\huge { \textbf{\expandafter{\@title}} }
+\end{center}
+%
+\vspace*{5em}
+%
+\begin{center}
+\Large {\textbf{ Version \expandafter{\@version}} }
+\end{center}
+%
+\begin{center}
+\vspace*{1em}
+\Large von
+\vspace*{1em}
+\end{center}
+%
+\begin{center}
+\Large \textbf{\expandafter{\@author}}
+\end{center}
+%
+\vspace*{0.05\textheight}
+%
+%
+\vspace*{0.75em}
+%
+\begin{center}
+\Large \textbf{\expandafter{\@ort}, \expandafter{\@datum}}
+\end{center}
+%
+\end{titlepage}%
+}

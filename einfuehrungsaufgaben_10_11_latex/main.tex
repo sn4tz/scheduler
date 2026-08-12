@@ -1,0 +1,87 @@
+\documentclass[a4paper,oneside,openright,11pt]{book}
+
+\usepackage[T1]{fontenc}
+
+%%%%%%%% Schriftart Latin Modern verwenden:
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc} % ggf. Editor auf utf8 stellen!!
+\usepackage[ngerman]{babel}
+\usepackage{ngerman} % unter anderem für bessere Silbentrennung
+\usepackage{listings}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{url}
+\def\UrlBreaks{\do\/\do-} % Zeilenumbrüche in URLs bei Bindestrich oder Schrägstrich
+\usepackage{hyperref}
+\usepackage{xspace}
+\usepackage{csquotes}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{todonotes}
+\usepackage{multirow}
+\usepackage{bigstrut}
+\usepackage{subcaption}
+
+
+
+%avoid overfull hbox problem
+\setlength{\emergencystretch}{3em}
+
+%avoid underfull hbox problem in bibliography
+\usepackage{etoolbox}
+% Variant A
+\apptocmd{\sloppy}{\hbadness 2000\relax}{}{}
+% Variant B
+% \apptocmd{\thebibliography}{\raggedright}{}{}
+\hyphenpenalty=5000
+\tolerance=1000
+
+% standard scaling factor for graphics, to support homogenous looks.
+\newcommand{\stdScaleFactor}{0.45}
+
+% Titelseite und Erklaerung
+\usepackage{sethesis}
+
+% Angaben Titelseite
+\unilogo{\includegraphics[scale=0.75]{FHDW-Logo.eps}}
+% Angaben zur Arbeit
+\author{Yashar Busch\\Oliver Gröne\\Amelie Meyer\\Daniel Pasternak} % Hier Namen eintragen
+\title{Einführungsaufgaben 10 \& 11} % Hier Titel
+\version{07-08-2026}
+\ort{Hannover}
+
+\datum{\today} % Datum der Abgabe hier einsetzen
+
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\clearpage
+%%%%%% Sperrvermerk einkommentieren, falls nötig.
+%\input{restriction-notice}
+
+\clearpage
+% \input{contents/changemanagment}
+\tableofcontents
+\mainmatter
+
+\input{contents/aufgabe10}
+\input{contents/aufgabe11}
+
+
+
+\appendix
+
+\input{contents/anhang}
+
+%\bibliographystyle{alpha}
+\bibliographystyle{halpha-abbrv} % Support curstom abbreviation labels, see https://www.math.cmu.edu/~gautam/sj/blog/20171114-bibtex-doi.html
+\bibliography{meinearbeit}
+
+\backmatter
+
+
+\end{document}
